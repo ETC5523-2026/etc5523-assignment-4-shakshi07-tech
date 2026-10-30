@@ -1,0 +1,16 @@
+Package: fireprint
+Title: Explore Australia's Changing Fire Detection Patterns
+Version: 0.1.0
+Authors@R:
+    person("Shakshi", "Shah",
+           email = "ssha0414@student.monash.edu",
+           role = c("aut", "cre"))
+Description: Provides reproducible tools and an interactive Shiny
+    application for comparing satellite-detected fire activity across
+    selected periods of Australia's 2019-2020 fire season. Users can
+    examine changes in detection counts, geographical distributions,
+    and spatial concentration using prepared NASA FIRMS MODIS data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.1.1
