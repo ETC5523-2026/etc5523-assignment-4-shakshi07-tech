@@ -133,7 +133,7 @@ compare_fire_periods <- function(
 
     # Aggregate again by location to ensure one count
     # per grid cell, even if input rows are duplicated.
-    cells <- aggregate(
+    cells <- stats::aggregate(
       detections ~ cell_lon + cell_lat,
       data = month_data,
       FUN = sum

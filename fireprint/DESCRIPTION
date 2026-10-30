@@ -17,3 +17,9 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Config/roxygen2/version: 8.1.1
+Imports:
+    shiny
+Suggests:
+    bslib,
+    htmltools,
+    leaflet
