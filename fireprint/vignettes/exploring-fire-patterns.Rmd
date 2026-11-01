@@ -1,0 +1,424 @@
+
+---
+title: "Exploring Fire Detection Patterns with Fireprint"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exploring Fire Detection Patterns with Fireprint}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(fireprint)
+
+fmt_count <- function(x) {
+  format(
+    round(x),
+    big.mark = ",",
+    scientific = FALSE,
+    trim = TRUE
+  )
+}
+
+fmt_pct <- function(x) {
+  sprintf("%.2f%%", x)
+}
+
+fmt_pp <- function(x) {
+  sprintf("%.2f", abs(x))
+}
+```
+
+# Why look beyond fire detection counts?
+
+Australia's 2019–2020 bushfire season provides an important case for examining how recorded fire activity varied across time and location. Satellite observations offer a useful source of information, but the total number of fire detections does not tell us everything about their geographic distribution.
+
+Consider two months with similar detection counts. In one month, the observations might be spread across many locations. In another, a greater proportion might occur within a smaller number of locations. Although the overall totals could be similar, the geographic patterns would be different.
+
+This distinction is the starting point for **Fireprint: Beyond the Flames**, an R package and interactive Shiny application developed to explore historical satellite fire-detection patterns across Australia.
+
+The project investigates the following question:
+
+**How did the concentration of satellite-detected fire activity shift between selected periods of Australia's 2019–2020 fire season?**
+
+Fireprint focuses on the months from September 2019 to February 2020. It is intended for environmental monitoring analysts, students and others interested in examining geographic patterns in satellite-detection records.
+
+The aim is to help users look beyond detection totals by comparing how many observations were recorded, how many geographic grid cells contained detections, and what proportion occurred in the most active cells.
+
+These comparisons can reveal differences that are less apparent when considering detection counts alone. However, Fireprint is an exploratory tool: it describes patterns in the available satellite records rather than measuring fire damage or explaining why particular events occurred.
+
+# Understanding the data and measures
+
+## Where do the observations come from?
+
+Fireprint uses active-fire detection records distributed through NASA's Fire Information for Resource Management System (FIRMS).
+
+The observations were collected by the Moderate Resolution Imaging Spectroradiometer (MODIS) instruments aboard NASA's Terra and Aqua satellites.
+
+The original source files contain observations for Australia during 2019 and 2020. For this project, records from September 2019 to February 2020 were selected and prepared for analysis.
+
+Instead of examining each satellite observation separately, Fireprint groups the detections by month and geographic grid cell.
+
+This makes it possible to compare how recorded detections were distributed across locations during different months.
+
+## What is a geographic grid cell?
+
+A geographic grid divides an area into smaller sections that can be used to organise spatial observations.
+
+Fireprint uses grid cells defined by one-degree intervals of latitude and longitude. Each satellite detection is assigned to a cell according to its coordinates, and detections within the same cell and month are counted together.
+
+The resulting dataset allows us to examine which cells contained detections and how many were recorded in each.
+
+One important consideration is that one-degree latitude–longitude cells do not represent identical physical areas at every latitude. For this reason, the grid should be understood as a way of organising observations rather than a direct measure of land area.
+
+## Exploring the prepared dataset
+
+The package includes a prepared dataset called `fire_cells`.
+
+```{r explore-data}
+data("fire_cells", package = "fireprint")
+
+head(fire_cells)
+```
+
+Each row represents a geographic grid cell during a particular month.
+
+The dataset contains four variables:
+
+- `month`: the observation month, recorded in YYYY-MM format.
+- `cell_lon`: the longitude coordinate used to identify the grid cell.
+- `cell_lat`: the latitude coordinate used to identify the grid cell.
+- `detections`: the number of satellite detections recorded in that cell during the month.
+
+Because this prepared dataset is included in the package, users do not need to download the original NASA CSV files to run the comparison function or the Shiny application.
+
+## What does Fireprint measure?
+
+Fireprint uses three measures to describe the recorded detections.
+
+### Total detections
+
+Total detections represent the sum of satellite fire detections recorded during a selected month.
+
+This measure describes the volume of observations in the dataset. It should not be interpreted as the number of individual bushfires, since multiple satellite detections may relate to the same fire.
+
+### Occupied grid cells
+
+An occupied grid cell is a cell containing at least one recorded detection during the selected month.
+
+The number of occupied cells provides an indication of how widely detections were distributed across the chosen geographic grid.
+
+For example, detections recorded in 300 cells are distributed across more grid locations than detections recorded in 200 cells. However, this does not establish that a larger physical area was burned.
+
+### Top-ten concentration
+
+Top-ten concentration measures the percentage of a month's detections recorded in its ten most active grid cells.
+
+The calculation is:
+
+\[
+\text{Top-ten concentration (\%)} =
+\frac{\text{Detections in the ten most active cells}}
+{\text{Total detections in the month}}
+\times 100
+\]
+
+For example, a concentration of 60% means that six out of every ten recorded detections occurred within the ten cells with the highest detection counts.
+
+A higher percentage indicates that a greater share of detections was concentrated in those cells.
+
+The ten most active cells are identified separately for each month. They are therefore not necessarily the same geographic locations across different periods.
+
+These three measures complement one another. Total detections describe the volume of observations, occupied cells describe their distribution across the grid, and top-ten concentration describes how strongly detections were concentrated in the most active cells.
+
+# Reproducing the comparison in R
+
+Fireprint provides an exported function called `compare_fire_periods()`.
+
+The function accepts two different months and calculates the summary measures for each period, together with the differences between them.
+
+## Installing the package
+
+Fireprint can be installed from its GitHub repository.
+
+If the `remotes` package is not already installed, install it first:
+
+```{r installation, eval=FALSE}
+install.packages("remotes")
+
+remotes::install_github(
+  "ETC5523-2026/etc5523-assignment-4-shakshi07-tech",
+  subdir = "fireprint"
+)
+```
+
+The `subdir` argument is required because the R package is located inside the `fireprint` folder of the repository.
+
+After installation, load the package:
+
+```{r load-package, eval=FALSE}
+library(fireprint)
+```
+
+## Running a comparison
+
+For this example, we compare November 2019 with January 2020.
+
+```{r run-comparison}
+result <- compare_fire_periods(
+  month_a = "2019-11",
+  month_b = "2020-01"
+)
+```
+
+The `summary` component contains the total detections, occupied grid cells and top-ten concentration for each month.
+
+```{r summary-table}
+summary_table <- result$summary
+
+names(summary_table) <- c(
+  "Month",
+  "Total detections",
+  "Occupied grid cells",
+  "Top cells",
+  "Top-cell share (%)"
+)
+
+knitr::kable(
+  summary_table,
+  format = "html",
+  caption = "Satellite fire-detection summary for the selected months",
+  digits = 2,
+  format.args = list(big.mark = ",")
+)
+```
+
+To examine the differences between the selected periods, we can present the comparison results in a second table.
+
+```{r change-table}
+change_table <- data.frame(
+  Measure = c(
+    "Recorded detections",
+    "Change in detections (%)",
+    "Occupied grid cells",
+    "Top-ten concentration"
+  ),
+  Change = c(
+    sprintf(
+      "%+d",
+      result$comparison$detection_change
+    ),
+    sprintf(
+      "%+.2f%%",
+      result$comparison$detection_change_pct
+    ),
+    sprintf(
+      "%+d",
+      result$comparison$occupied_cell_change
+    ),
+    sprintf(
+      "%+.2f percentage points",
+      result$comparison$concentration_change_pp
+    )
+  )
+)
+
+knitr::kable(
+  change_table,
+  format = "html",
+  caption = "Changes from November 2019 to January 2020"
+)
+```
+
+The comparison reports changes from the first selected month to the second. A negative value indicates a decrease, while a positive value indicates an increase.
+
+For detection counts, the percentage change is calculated relative to the first month. For concentration, the difference is expressed in **percentage points**, because we are comparing two percentages.
+
+The function also returns `grid_data`, containing the grid-level observations for the selected months.
+
+```{r grid-example}
+head(result$grid_data)
+```
+
+These outputs can be used together to investigate changes in detection volume, geographic distribution and concentration.
+
+# What changed between November 2019 and January 2020?
+
+The results provide a useful example of why detection volume and geographic concentration should be examined separately.
+
+```{r prepare-results, include=FALSE}
+summary_data <- result$summary
+comparison_data <- result$comparison
+
+nov <- summary_data[
+  summary_data$month == "2019-11",
+]
+
+jan <- summary_data[
+  summary_data$month == "2020-01",
+]
+
+change <- comparison_data[1, ]
+```
+
+## Recorded detections
+
+In November 2019, Fireprint records `r fmt_count(nov$total_detections)` satellite detections.
+
+In January 2020, the number is `r fmt_count(jan$total_detections)`.
+
+This represents a decrease of `r fmt_count(abs(change$detection_change))` detections, equivalent to `r fmt_pct(abs(change$detection_change_pct))` relative to November.
+
+The total number of recorded detections was therefore lower in January than in November.
+
+## Occupied grid cells
+
+November 2019 recorded detections in `r fmt_count(nov$occupied_cells)` grid cells, compared with `r fmt_count(jan$occupied_cells)` in January 2020.
+
+The number of occupied cells decreased by `r fmt_count(abs(change$occupied_cell_change))`.
+
+This indicates that detections were recorded in fewer grid locations in January, according to the one-degree grid used in Fireprint.
+
+## Concentration in the ten most active cells
+
+In November, the ten most active grid cells accounted for `r fmt_pct(nov$top_cell_share_pct)` of the month's detections.
+
+In January, their share was `r fmt_pct(jan$top_cell_share_pct)`.
+
+Top-ten concentration therefore increased by `r fmt_pp(change$concentration_change_pp)` percentage points.
+
+Although January had fewer detections overall, a larger proportion occurred in its ten most active cells.
+
+It is important to distinguish percentage points from percentage change. Here, the difference is calculated by subtracting November's concentration percentage from January's concentration percentage.
+
+The result describes a change in the share of detections, not a relative percentage change in the number of detections.
+
+# Making sense of the patterns
+
+The comparison highlights an important distinction between the volume of recorded detections and their geographic concentration.
+
+January 2020 had fewer recorded detections and fewer occupied grid cells than November 2019. However, a greater proportion of January's detections occurred within its ten most active cells.
+
+This suggests that the recorded detections were more concentrated according to Fireprint's chosen grid-based measure, despite the lower overall detection count.
+
+If we examined only the totals, we would observe a decline in recorded detections. The concentration measure adds another perspective by showing that the proportion occurring in the most active cells increased.
+
+This is the main value of using the measures together: they allow us to distinguish between how many detections were recorded and how those detections were distributed.
+
+The comparison does not, by itself, identify which geographic locations experienced the greatest changes. To investigate that question, we can turn to the interactive dashboard.
+
+## Exploring the dashboard
+
+Fireprint also includes an interactive Shiny application for examining satellite fire-detection patterns across the study period.
+
+Launch the application using:
+
+```{r launch-dashboard, eval=FALSE}
+fireprint::run_fireprint()
+```
+
+The dashboard is designed to support comparisons between two selected months from September 2019 to February 2020.
+
+The numerical summaries help users examine differences in recorded detections, occupied grid cells and top-ten concentration. Geographic displays provide an additional perspective by showing where detections occurred within the selected periods.
+
+A useful approach is to begin with the numerical comparison and then explore the corresponding geographic patterns. This allows users to consider both the overall changes and the locations contributing to those patterns.
+
+For example, when one month has a higher concentration percentage, users can examine the geographic displays to explore how detections were distributed across the selected grid cells.
+
+This combination of summary measures and geographic views supports a more detailed examination of historical fire-detection patterns than either approach would provide on its own.
+
+However, the dashboard should be interpreted as an exploratory tool. Its maps represent recorded satellite detections, not the boundaries of individual fires, burned area or fire severity.
+
+# What the data cannot tell us
+
+Although satellite observations provide valuable information for examining historical fire-detection patterns, several limitations need to be considered.
+
+## A satellite detection is not an individual fire
+
+MODIS identifies observations associated with potential active fires.
+
+Multiple detections may relate to the same fire, while some fire activity may not be detected because of cloud cover, satellite observation timing or other conditions affecting detection.
+
+For this reason, the number of recorded detections should not be described as the number of separate bushfires.
+
+## Grid cells do not represent equal physical areas
+
+Fireprint uses one-degree latitude–longitude grid cells.
+
+The physical area covered by these cells varies with latitude, so the number of occupied cells does not provide a direct estimate of burned land area.
+
+The concentration measure also depends on the chosen grid resolution. A different grid size could produce different patterns.
+
+## Concentration is not the same as fire severity
+
+A higher top-ten concentration means that a greater proportion of detections occurred in the ten most active grid cells.
+
+It does not necessarily mean that the fires were more intense, caused greater damage or affected a larger area.
+
+The measure describes the geographic distribution of recorded detections rather than the consequences of the underlying fire activity.
+
+## The analysis does not establish causes
+
+Changes in detection patterns may reflect several factors, including weather conditions, vegetation, fire behaviour and satellite observation conditions.
+
+However, Fireprint does not directly examine these factors or test causal relationships.
+
+Its findings should therefore be interpreted as descriptive comparisons rather than explanations of why recorded fire activity changed.
+
+## The analysis is limited to the available records
+
+Fireprint uses the observations included in its prepared dataset.
+
+The results describe patterns within those records and should not automatically be treated as a complete account of all fire activity across Australia.
+
+These limitations are important because they help distinguish what the analysis shows from conclusions that would require additional data or methods.
+
+# What can we take away?
+
+The comparison between November 2019 and January 2020 demonstrates why looking beyond detection totals can be useful.
+
+January recorded fewer satellite detections and fewer occupied grid cells, but a greater share of its detections occurred in the ten most active cells.
+
+This indicates a more concentrated distribution according to Fireprint's grid-based measure, even though the overall number of recorded detections was lower.
+
+The findings do not establish that fires became more severe or that a smaller area was affected. They describe how the distribution of satellite detections differed between the two selected months.
+
+More broadly, Fireprint provides a reproducible way to combine detection counts, grid-based concentration measures and interactive maps when exploring historical fire-detection patterns.
+
+Its purpose is to help users make informed comparisons while recognising the distinction between what the data reveal and what remains uncertain.
+
+# Data source and acknowledgement
+
+Fireprint uses historical active-fire detection records obtained through NASA's Fire Information for Resource Management System (FIRMS). The observations were collected by the Moderate Resolution Imaging Spectroradiometer (MODIS) instruments aboard NASA's Terra and Aqua satellites.
+
+The source files, `modis_2019_Australia.csv` and `modis_2020_Australia.csv`, contain observations for Australia during 2019 and 2020. For this project, observations from September 2019 to February 2020 were selected and aggregated into monthly, one-degree latitude–longitude grid cells.
+
+Both CSV files identify MODIS as the instrument and report `6.03` in the `version` field. The precise processing classification and product DOI have not been independently verified, so no specific product identifier is assigned here.
+
+## Data acknowledgement
+
+We acknowledge the use of data from NASA's Land, Atmosphere Near real-time Capability for Earth observations (LANCE), part of NASA's Earth Science Data and Information System (ESDIS), made available through FIRMS.
+
+## Source details
+
+- **Data provider:** NASA Fire Information for Resource Management System (FIRMS).
+- **Instrument:** Moderate Resolution Imaging Spectroradiometer (MODIS).
+- **Satellite platforms:** Terra and Aqua.
+- **Geographic coverage:** Australia.
+- **Analysis period:** September 2019 to February 2020.
+- **Version field in the source files:** `6.03`.
+- **Data preparation:** Monthly aggregation of satellite detections into one-degree latitude–longitude grid cells.
+
+## Official sources and documentation
+
+- [NASA FIRMS — Active Fire Data](https://firms.modaps.eosdis.nasa.gov/content/active_fire/)
+- [NASA FIRMS — Archive Download](https://firms2.modaps.eosdis.nasa.gov/download/)
+- [NASA Earthdata — LANCE acknowledgement and disclaimer](https://www.earthdata.nasa.gov/data/projects/lance#ed-firms-citation)
+- [MODIS Collection 6 and 6.1 Active Fire Product User's Guide](https://www.earthdata.nasa.gov/s3fs-public/2023-09/MODIS_C6_C6.1_Fire_User_Guide_1.0.pdf)
+
+The processed dataset is intended for reproducible exploration of satellite fire-detection patterns. It should not be interpreted as a direct measurement of individual fires, burned area or fire severity.

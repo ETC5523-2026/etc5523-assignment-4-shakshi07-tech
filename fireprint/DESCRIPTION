@@ -22,4 +22,7 @@ Imports:
 Suggests:
     bslib,
     htmltools,
-    leaflet
+    knitr,
+    leaflet,
+    rmarkdown
+VignetteBuilder: knitr
