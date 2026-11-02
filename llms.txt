@@ -6,116 +6,107 @@ bushfire season.**
 
 ## About Fireprint
 
-Australia’s 2019–2020 bushfire season, often referred to as *Black
-Summer*, was one of the country’s most significant environmental events.
-While maps of fire activity can show where detections occurred, they do
-not always make it easy to understand how the distribution of that
-activity changed throughout the season.
+Australia’s 2019–2020 bushfire season, widely known as *Black Summer*,
+brought unprecedented attention to the scale and consequences of
+bushfires across the country. Maps and satellite imagery helped
+communicate the extent of the crisis, but understanding the patterns
+behind those images requires looking more closely at when and where fire
+activity was recorded.
 
-For example, a month with a large number of fire detections does not
-necessarily mean that those detections were spread across a wider
-geographic area. Fire activity may instead have been concentrated within
-a relatively small number of locations.
+A month with more satellite fire detections does not necessarily have a
+wider geographic distribution of detections. Activity may be
+concentrated in a relatively small number of locations, while another
+month may show fewer detections spread across a larger number of
+locations.
 
-**Fireprint** was developed to explore this distinction.
+**Fireprint: Beyond the Flames** was developed to explore this
+distinction.
 
-Fireprint is an R package that brings together a prepared satellite
+Fireprint is an R package that combines a prepared satellite
 fire-detection dataset, a reusable comparison function and an
-interactive Shiny dashboard. Rather than presenting fire activity as a
-single national total, it allows users to compare selected months and
-examine how the volume, geographic coverage and concentration of
-recorded detections differed.
+interactive Shiny dashboard. It allows users to compare selected months
+of the 2019–2020 bushfire season and investigate differences in
+detection counts, geographic grid coverage and concentration.
 
-The project is guided by one central research question:
+The project is guided by one research question:
 
 **How did the concentration of satellite-detected fire activity shift
 between selected periods of Australia’s 2019–2020 fire season?**
 
-The package is intended for students, environmental monitoring analysts
-and other users interested in understanding geographic patterns in
-satellite fire-detection data. Its interactive design allows users to
-investigate these patterns without needing to reproduce the underlying
-data-processing steps.
+Fireprint is intended for students, environmental monitoring analysts
+and others interested in exploring geographic patterns in satellite
+observations. The dashboard provides an accessible starting point for
+visual exploration, while the package’s R functions allow the same
+comparisons to be reproduced programmatically.
 
 ## What can you explore?
 
-The Fireprint dashboard provides an interactive environment for
-comparing two months between September 2019 and February 2020.
+The interactive dashboard allows users to compare any two different
+months between September 2019 and February 2020.
 
-Users can select their preferred months and examine the differences
-through summary measures, interactive maps and supporting
-interpretations.
+Rather than relying on a single measure of fire activity, Fireprint
+brings together several complementary views of the satellite detection
+records.
 
-The dashboard includes the following features:
-
-- **Month-by-month comparison:** Select two different months to
-  investigate how recorded fire activity changed across the study
-  period.
-- **Total fire detections:** Compare the number of satellite fire
-  detections recorded in each selected month.
+- **Monthly detection counts:** Compare the total number of recorded
+  fire detections in each selected month.
 - **Geographic grid coverage:** Examine how many 1-degree
-  latitude–longitude grid cells contained at least one detection,
-  providing an indication of how widely detections were distributed
-  across the grid.
-- **Interactive maps:** Explore the geographic distribution of
-  detections through two maps with synchronized views, making it easier
-  to examine the same regions across both months.
-- **Grid-cell information:** Hover over individual coloured cells to
-  inspect their detection counts and geographic coordinates.
-- **Most active locations:** Identify the ten grid cells with the
+  latitude–longitude grid cells contained at least one detection.
+- **Interactive geographic comparisons:** Explore two maps with
+  synchronised views, allowing the same parts of Australia to be
+  examined across both months.
+- **Individual grid-cell details:** Hover over coloured cells to inspect
+  their detection counts and geographic coordinates.
+- **Most active grid cells:** Identify the ten grid cells with the
   highest detection counts in each selected month.
-- **Concentration comparison:** Examine the percentage of monthly
-  detections occurring within the ten most active grid cells.
-- **Interpretive summary:** Read an explanation of the observed
-  differences, alongside important considerations for interpreting the
-  results.
+- **Detection concentration:** Compare the proportion of monthly
+  detections recorded within each month’s ten most active grid cells.
+- **Supporting interpretation:** Examine the differences alongside
+  explanations of what the measures represent and the limitations that
+  affect their interpretation.
 
-Both maps use consistent detection-count categories so that colours have
-the same meaning across the two selected months.
+Both maps use consistent detection-count categories so that the same
+colours represent the same count ranges across the selected months.
 
-This is particularly important when comparing geographic patterns.
-Without a consistent scale, differences in colour could reflect changes
-in the map’s display rather than meaningful differences in the recorded
-data.
+This matters because differences in map colours should reflect
+differences in the underlying records, rather than changes in the visual
+scale.
 
-Together, these features encourage users to look beyond the total number
-of detections and consider where fire activity was recorded and how
-strongly it was concentrated in particular locations.
+Taken together, these features help users investigate not only how many
+fire detections were recorded, but also how their geographic
+distribution differed throughout the season.
 
 ## Data source and preparation
 
-Fireprint uses active-fire detection records from NASA’s **Fire
-Information for Resource Management System (FIRMS)**, specifically
-observations collected by the Moderate Resolution Imaging
-Spectroradiometer (MODIS).
+Fireprint uses active-fire detection records obtained from NASA’s **Fire
+Information for Resource Management System (FIRMS)**. The records used
+in this project come from the Moderate Resolution Imaging
+Spectroradiometer (MODIS), carried aboard NASA’s Terra and Aqua
+satellites.
 
-These satellite records provide geographic information about locations
-where active-fire signals were detected.
-
-For this project, the analysis focuses on Australia between **September
-2019 and February 2020**, covering six months of the 2019–2020 bushfire
+The analysis focuses on Australia from **September 2019 to February
+2020**, covering six consecutive months of the 2019–2020 bushfire
 season.
 
-To make the records suitable for geographic comparison, individual
+The original detection records contain geographic coordinates and
+observation information. To make geographic comparisons more manageable,
 detections were grouped into 1-degree latitude–longitude grid cells. The
 number of detections was then calculated for each grid cell and month.
 
-This aggregation serves two purposes. First, it makes the geographic
-distribution of detections easier to visualise than plotting a large
-number of individual observations. Second, it provides a consistent
-spatial framework for comparing detection counts between months.
+This approach provides a consistent geographic framework for comparing
+the distribution of recorded detections without plotting every
+individual observation.
 
-The resulting processed dataset, `fire_cells`, is included directly in
-the R package.
+The resulting dataset, `fire_cells`, is included directly in the
+package.
 
-The scripts used to prepare the data are retained in the `data-raw/`
-directory. This separates the original preparation process from the
-packaged dataset while documenting how the data used by the dashboard
-was produced.
+The original source files and the R script used to prepare the dataset
+are retained in the `data-raw/` directory. This makes the preparation
+process inspectable and reproducible from the supplied source records.
 
-As a result, users can explore the dashboard using the prepared data
-without having to download and process the original satellite records
-themselves.
+Because the processed dataset is packaged with Fireprint, users do not
+need to download the original MODIS files or run the preparation script
+simply to use the dashboard.
 
 **Original data source:** [NASA
 FIRMS](https://firms.modaps.eosdis.nasa.gov/)
@@ -124,10 +115,6 @@ FIRMS](https://firms.modaps.eosdis.nasa.gov/)
 
 Fireprint can be installed directly from its GitHub Classroom
 repository.
-
-As the R package is located inside the `fireprint` subdirectory of the
-assignment repository, the installation command must specify this
-location.
 
 First, install the `remotes` package if it is not already available:
 
@@ -146,17 +133,17 @@ remotes::install_github(
 )
 ```
 
-The `subdir = "fireprint"` argument tells R where to find the package
-within the repository.
+The `subdir = "fireprint"` argument is necessary because the R package
+is located inside the `fireprint` folder of the assignment repository.
 
-*Note: Installation requires access to the GitHub repository. The
-command should be verified through a successful installation test before
-submission.*
+The package has been successfully installed from GitHub and checked
+using
+[`devtools::check()`](https://devtools.r-lib.org/reference/check.html),
+with no errors, warnings or notes in the completed check.
 
 ## Launching the interactive dashboard
 
-After installing the package, load Fireprint and launch the dashboard
-using:
+After installation, load the package and launch the dashboard:
 
 ``` r
 
@@ -165,212 +152,243 @@ library(fireprint)
 run_fireprint()
 ```
 
-The Shiny dashboard will launch in a browser or R’s available
-application viewer, depending on the user’s environment.
+The Shiny application opens in a browser, where users can select two
+months and explore the corresponding geographic patterns.
 
-The dashboard uses the processed dataset supplied with the package, so
-users do not need to load a separate CSV file or run the original
-data-preparation scripts.
+All dashboard comparisons use the processed dataset supplied with the
+package. No additional CSV files need to be loaded at runtime.
 
-Once the dashboard is open, users can select two months, explore the
-corresponding maps and examine how the recorded fire-detection patterns
-differ.
+To begin, select two different months, examine the summary measures and
+compare the maps. Hovering over grid cells reveals the detection counts
+associated with individual locations.
+
+The accompanying interpretation helps connect the numerical differences
+with the geographic patterns shown on the maps.
 
 ## Using the comparison function
 
-In addition to the Shiny dashboard, Fireprint provides a reusable R
-function called
-[`compare_fire_periods()`](https://etc5523-2026.github.io/etc5523-assignment-4-shakshi07-tech/reference/compare_fire_periods.md).
+Fireprint also provides an exported function,
+[`compare_fire_periods()`](https://etc5523-2026.github.io/etc5523-assignment-4-shakshi07-tech/reference/compare_fire_periods.md),
+for users who want to reproduce the analysis directly in R.
 
-This function supports comparisons between selected periods using the
-package’s prepared fire-detection data.
+For example, the following code compares November 2019 with January
+2020:
 
-Providing a comparison function separately from the dashboard is an
-important part of the package design. It allows the analytical
-functionality to be accessed through R code rather than restricting
-users to the interactive interface.
+``` r
 
-This makes the package useful for users who wish to incorporate the
-comparison into their own analytical workflows.
+library(fireprint)
 
-The function’s arguments, returned values and usage examples are
-described in its R documentation, which can be accessed using:
+result <- compare_fire_periods(
+  month_a = "2019-11",
+  month_b = "2020-01"
+)
+
+result$summary
+result$comparison
+```
+
+The function returns three components:
+
+| Component | What it contains |
+|----|----|
+| `summary` | Detection totals, occupied grid cells and concentration measures for each selected month |
+| `comparison` | Differences between the selected months in detection counts, occupied cells and concentration |
+| `grid_data` | Grid-level detection records for the two selected months |
+
+Separating the comparison function from the dashboard makes the
+analytical method reusable. Users can inspect the results in R,
+incorporate them into other analyses or reproduce the comparisons
+without relying on the interactive interface.
+
+Further information about the function’s arguments and returned values
+is available through its reference documentation:
 
 ``` r
 
 ?fireprint::compare_fire_periods
 ```
 
-The dashboard and comparison function therefore serve complementary
-purposes: the dashboard supports visual exploration, while the function
-makes the underlying comparison available for programmatic use.
+## Understanding the measures
 
-## Understanding the results
+Fireprint uses three related measures to describe different aspects of
+satellite-detected fire activity.
 
-Fireprint focuses on three related but distinct aspects of recorded fire
-activity.
+### Detection volume
 
-### 1. Detection volume
-
-Detection volume refers to the total number of satellite fire detections
+Detection volume is the total number of satellite fire detections
 recorded during a selected month.
 
-It provides an indication of the amount of recorded detection activity,
-but it should not be interpreted as the number of individual bushfires.
+It describes the amount of recorded detection activity, but it does not
+represent the number of separate bushfires.
 
-A higher monthly total indicates that more detections were recorded, not
-necessarily that more separate fires occurred or that a greater land
+A higher total means that more detections were recorded. It does not
+necessarily mean that more individual fires occurred or that a larger
 area burned.
 
-### 2. Geographic grid coverage
+### Geographic grid coverage
 
-Geographic grid coverage refers to the number of 1-degree
-latitude–longitude grid cells containing at least one recorded
-detection.
+Geographic grid coverage is measured by counting the number of 1-degree
+latitude–longitude grid cells containing at least one detection during a
+selected month.
 
-This measure helps describe how widely detections were distributed
-across the grid.
+This provides a descriptive indication of how widely the detections were
+distributed across the geographic grid.
 
-For example, two months may have similar detection totals but different
-numbers of occupied grid cells. This would suggest that the detections
-were distributed differently across the geographic grid.
+Two months may have similar detection totals but different numbers of
+occupied cells, suggesting that their recorded activity was distributed
+differently.
 
-However, occupied grid cells are not equivalent to a measured burned
-area.
+However, an occupied grid cell is not equivalent to a measured burned
+area, and the physical area represented by a 1-degree cell varies with
+latitude.
 
-### 3. Detection concentration
+### Detection concentration
 
-Detection concentration describes how much of a month’s recorded
-activity occurred within its ten most active grid cells.
+Detection concentration measures the percentage of a month’s detections
+recorded within its ten most active grid cells.
 
-Fireprint calculates this as:
+It is calculated as:
 
 **Concentration (%) = (Detections in the ten most active grid cells ÷
 Total monthly detections) × 100**
 
-A higher percentage indicates that a larger share of the month’s
-recorded detections occurred within those ten cells. A lower percentage
-indicates that the top ten cells accounted for a smaller share of the
-total.
+A higher percentage means that a greater share of that month’s recorded
+detections occurred within its ten most active cells.
 
-This measure provides a straightforward way to examine whether recorded
-detections were relatively concentrated in a small number of grid cells
-or more widely distributed across the remaining occupied cells.
+A lower percentage means that those cells accounted for a smaller share
+of the month’s total detections.
 
-Importantly, the ten most active cells are identified separately for
-each selected month. They are not necessarily the same geographic
-locations in both periods.
+The ten most active cells are identified separately for each month. They
+are therefore not necessarily the same geographic locations in both
+periods.
 
-### Why examine all three measures?
+This measure provides a useful summary of relative concentration,
+although it does not capture every aspect of the geographic
+distribution.
 
-These measures answer different questions about the same dataset.
+### Why consider these measures together?
 
-Detection volume tells us **how many detections were recorded**.
-Geographic grid coverage tells us **how many grid cells contained
-detections**. Concentration tells us **what proportion of detections
-occurred in the ten most active cells**.
+Each measure addresses a different part of the research question.
 
-A month may have more detections overall while also having a lower
-concentration percentage. Similarly, a month with fewer detections may
-have a relatively high proportion of its activity concentrated in a
-small number of cells.
+Detection volume describes **how many detections were recorded**. Grid
+coverage describes **how many geographic cells contained detections**.
+Concentration describes **how much of the recorded activity occurred
+within the most active cells**.
 
-Considering these measures together provides a more informative
-description of geographic fire-detection patterns than relying on
-monthly totals alone.
+A month may have fewer detections overall but a higher concentration
+percentage. Conversely, a month with more detections may have activity
+distributed across a greater number of grid cells.
+
+Examining these measures together helps avoid treating the total number
+of detections as a complete description of geographic fire activity.
 
 ## Important limitations
 
-Although satellite fire-detection data provides valuable information
-about the geographic and temporal patterns of recorded fire activity,
-several limitations must be considered.
+Satellite fire-detection records offer valuable opportunities to examine
+patterns over time and across locations. However, several limitations
+are important when interpreting Fireprint’s results.
 
-**Fire detections are not individual bushfires.** A satellite detection
-represents an observed active-fire signal, not necessarily a unique fire
-event. The same fire may contribute multiple detections, while some
-fires may not be detected.
+**Satellite detections are not individual fire events.** A single fire
+may generate multiple detections, while some fires may not be recorded.
+Detection counts should therefore not be interpreted as counts of unique
+bushfires.
 
-**Detection counts do not directly measure burned area or severity.** A
-high number of detections does not establish how much land burned, how
-intense the fires were, or the extent of ecological, economic or
-community damage.
+**Detection counts do not directly measure burned area or severity.**
+The number of recorded detections cannot establish how much land burned,
+how intense the fires were or the extent of environmental and community
+impacts.
 
-**Satellite observation conditions affect detection records.** Factors
-such as cloud cover, smoke, satellite observation timing and sensor
-characteristics can influence whether active fires are detected.
-Differences between months may therefore reflect both changes in fire
-activity and differences in observation conditions.
+**Observation conditions influence detection records.** Cloud cover,
+smoke, satellite observation timing and sensor characteristics can
+affect whether active fires are detected. Differences between months may
+reflect both changes in fire activity and variation in observation
+conditions.
 
-**Grid cells do not represent equal physical areas.** Although the
-analysis uses a consistent 1-degree latitude–longitude grid, the
-physical area covered by each cell varies with latitude. The number of
-occupied cells should therefore be interpreted as a descriptive measure
-of grid coverage rather than a direct estimate of affected land area.
+**The geographic grid is not equal-area.** Although the analysis uses
+consistent 1-degree latitude–longitude cells, their physical area varies
+with latitude. The number of occupied cells is therefore a measure of
+grid coverage, not a direct estimate of affected land area.
 
-**The concentration measure is a descriptive summary.** The percentage
-of detections in the ten most active cells helps compare relative
-concentration, but it does not establish the causes of the observed
-patterns or fully describe every aspect of their spatial distribution.
+**Concentration is a descriptive measure rather than an explanation.**
+The percentage of detections in the ten most active cells helps describe
+differences between months, but it does not identify the causes of those
+differences.
 
-These limitations are important when drawing conclusions from the
-dashboard. Fireprint is designed to support exploratory comparisons of
-recorded satellite detections, rather than to estimate the full physical
-or social impacts of the bushfire season.
+For these reasons, Fireprint should be understood as a tool for
+exploring patterns in recorded satellite detections, rather than
+estimating the full physical, ecological or social consequences of the
+bushfire season.
 
 ## Package structure and reproducibility
 
-Fireprint has been organised as an R package so that its data,
-analytical functionality, documentation and interactive application can
-be accessed through a consistent interface.
-
-Its main components include:
+Fireprint is organised as an R package so that its data, functions,
+documentation and interactive application can be accessed through a
+consistent workflow.
 
 | Component | Purpose |
 |----|----|
-| `fire_cells` | Prepared monthly grid-cell detection dataset |
-| [`compare_fire_periods()`](https://etc5523-2026.github.io/etc5523-assignment-4-shakshi07-tech/reference/compare_fire_periods.md) | Reusable function for comparing selected periods |
-| [`run_fireprint()`](https://etc5523-2026.github.io/etc5523-assignment-4-shakshi07-tech/reference/run_fireprint.md) | Launches the interactive Shiny dashboard |
-| `data-raw/` | Scripts documenting the preparation of the packaged data |
-| Function documentation | Describes the available functions, their arguments and usage |
-| `README.md` | Introduces the project, installation process and analytical purpose |
+| `data/fire_cells.rda` | Prepared monthly grid-cell detection dataset |
+| `data-raw/` | Original source files and the script used to prepare the packaged dataset |
+| `R/compare_fire_periods.R` | Reusable function for comparing selected months |
+| `R/run_fireprint.R` | Exported function for launching the Shiny application |
+| `inst/shiny/` | Interactive Shiny dashboard |
+| `man/` | Documentation for the exported functions and dataset |
+| `vignettes/exploring-fire-patterns.Rmd` | Worked example explaining the comparison and interpretation |
+| `README.md` | Project overview, installation instructions and usage guidance |
 
-Keeping these components together makes the project easier to
-understand, maintain and reuse.
-
-It also allows users to distinguish between the data-preparation
-process, the analytical comparisons and the interactive presentation of
-results.
+The package separates data preparation, analytical calculations and
+interactive presentation. This allows the underlying method to be
+inspected independently of the dashboard and makes it easier for other
+users to understand how the results were produced.
 
 ## Package website
 
-A pkgdown website is planned to provide a more accessible introduction
-to the package and its documentation.
+Fireprint has a publicly accessible pkgdown website containing the
+package overview, installation instructions, function reference pages,
+dataset documentation and a worked example.
 
-The website will bring together the package overview, function reference
-pages, dataset documentation and guidance for using the dashboard.
+**Website:**
+<https://etc5523-2026.github.io/etc5523-assignment-4-shakshi07-tech/>
 
-**Website:** *Link to be added after successful publication.*
+The website includes reference pages for
+[`compare_fire_periods()`](https://etc5523-2026.github.io/etc5523-assignment-4-shakshi07-tech/reference/compare_fire_periods.md),
+[`run_fireprint()`](https://etc5523-2026.github.io/etc5523-assignment-4-shakshi07-tech/reference/run_fireprint.md)
+and `fire_cells`.
+
+It also includes the article **Exploring Fire Detection Patterns with
+Fireprint**, which demonstrates how to reproduce a comparison in R,
+interpret the resulting measures and consider the limitations of
+satellite fire-detection data.
 
 ## Licence and data attribution
 
 The Fireprint package code is released under the MIT licence.
 
 The underlying MODIS active-fire detection records were obtained from
-NASA FIRMS and remain subject to the original data provider’s applicable
-terms and attribution requirements.
+NASA FIRMS. These source data remain subject to the original provider’s
+applicable terms and attribution requirements.
+
+The project acknowledges the use of data from NASA’s Land, Atmosphere
+Near real-time Capability for Earth observations (LANCE), part of NASA’s
+Earth Science Data and Information System (ESDIS).
 
 **Data provider:** NASA Fire Information for Resource Management System
 (FIRMS).
 
+**Source information:** [NASA
+FIRMS](https://firms.modaps.eosdis.nasa.gov/) and [NASA
+LANCE](https://www.earthdata.nasa.gov/data/projects/lance).
+
 ## Generative AI declaration
 
-Generative AI tools were used to assist with aspects of R programming,
-Shiny application development, debugging, package documentation and the
+Generative AI tools were used to support aspects of R programming, Shiny
+application development, debugging, package documentation and the
 communication of analytical findings.
 
-AI-generated suggestions were reviewed and adapted during development.
-The author remains responsible for the final code, analytical decisions,
-interpretations and submitted work.
+Suggestions generated through these tools were reviewed and adapted
+during development. Responsibility for the final code, data preparation,
+analytical choices, interpretation and submitted work remains with the
+author.
 
 ## Author
 
@@ -381,13 +399,6 @@ Monash University
 
 ETC5523 — Communicating with Data\
 Assignment 4
-
-------------------------------------------------------------------------
-
-*Fireprint: Beyond the Flames aims to make satellite fire-detection
-patterns easier to explore and interpret, encouraging users to consider
-not only how much fire activity was recorded, but also where it occurred
-and how its geographic concentration changed over time.*
 
 # Package index
 
