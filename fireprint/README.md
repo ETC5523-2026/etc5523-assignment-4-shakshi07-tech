@@ -236,9 +236,43 @@ The project acknowledges the use of data from NASA's Land, Atmosphere Near real-
 
 ## Generative AI declaration
 
-Generative AI tools were used to support aspects of R programming, Shiny application development, debugging, package documentation and the communication of analytical findings.
+I used **ChatGPT (OpenAI)** as a supporting tool during the planning, development, debugging and documentation of Fireprint. Its use primarily involved clarifying unfamiliar technical concepts, exploring possible implementation approaches, troubleshooting errors and improving the communication of analytical results.
 
-Suggestions generated through these tools were reviewed and adapted during development. Responsibility for the final code, data preparation, analytical choices, interpretation and submitted work remains with the author.
+AI assistance was used in the following areas:
+
+- **R package development:** Understanding the structure of an R package, the roles of `DESCRIPTION`, `NAMESPACE`, `R/`, `data/`, `data-raw/` and `inst/`, and how to document exported functions and datasets using `roxygen2`.
+- **Data preparation and analytical methods:** Discussing how satellite fire detections could be aggregated into geographic grid cells, how to compare detection counts across months, and how to distinguish geographic concentration from detection volume.
+- **Shiny application development:** Understanding reactive programming, connecting month-selection inputs to analytical functions, displaying interactive maps and summary measures, and considering how the application should respond to invalid or uninformative comparisons.
+- **Debugging and reproducibility:** Investigating R errors, checking package dependencies, troubleshooting GitHub installation, understanding `devtools::check()` results and resolving package-documentation or deployment issues.
+- **Documentation and communication:** Improving the clarity and organisation of the README, function documentation and analytical vignette, particularly when explaining results, assumptions and limitations.
+
+### Examples of AI-assisted questions
+
+The following are representative examples of the types of questions and prompts used during development, rather than verbatim transcripts of every interaction:
+
+1. *"What is the difference between an ordinary R project and an R package, and why are folders such as `R/`, `data/`, `data-raw/` and `inst/` needed?"*
+
+2. *"How can satellite fire-detection records be grouped into geographic grid cells so that their distribution can be compared across different months?"*
+
+3. *"How should I interpret a situation where one month has fewer fire detections but a higher proportion of detections in its ten most active grid cells?"*
+
+4. *"How does Shiny's reactive programming work, and how can changes in two month-selection inputs update summary statistics and interactive maps?"*
+
+5. *"What is the purpose of `roxygen2`, and how can I document an exported comparison function and a packaged dataset?"*
+
+6. *"How can I troubleshoot errors when installing an R package from a GitHub repository, particularly when the package is stored in a subdirectory?"*
+
+7. *"What should I check when `devtools::check()` reports an error, warning or note, and how can I verify that my package is ready for installation?"*
+
+8. *"How can I explain the limitations of MODIS active-fire detections without incorrectly treating them as measurements of burned area, fire severity or the number of individual fires?"*
+
+9. *"How can I organise my README and pkgdown documentation so that users can understand the package's purpose, installation process, functions and analytical limitations?"*
+
+### Review and responsibility
+
+AI-generated explanations, code suggestions and documentation drafts were reviewed and adapted throughout development. I tested the package functions, examined the dashboard's behaviour, checked installation and package diagnostics, and revised the written explanations to reflect the actual implementation.
+
+ChatGPT was used as a learning and development aid rather than as an independent source of scientific evidence. The final code, analytical choices, interpretation of results and submitted work remain my responsibility.
 
 ## Author
 
