@@ -2,3 +2,7 @@
 
 export(compare_fire_periods)
 export(run_fireprint)
+import(bslib)
+import(htmltools)
+import(htmlwidgets)
+import(leaflet)

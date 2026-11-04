@@ -2,6 +2,11 @@
 #'
 #' Opens the interactive Fireprint dashboard to compare satellite-detected
 #' fire activity across Australia's 2019–2020 fire season.
+#'#' @import shiny
+#' @import bslib
+#' @import htmltools
+#' @import htmlwidgets
+#' @import leaflet
 #'
 #' @return Launches a Shiny application.
 #' @export

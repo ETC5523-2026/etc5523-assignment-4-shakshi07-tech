@@ -12,6 +12,7 @@ Launches a Shiny application.
 \description{
 Opens the interactive Fireprint dashboard to compare satellite-detected
 fire activity across Australia's 2019–2020 fire season.
+#' @import shiny
 }
 \examples{
 \dontrun{
