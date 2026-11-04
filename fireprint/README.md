@@ -71,13 +71,17 @@ Then install Fireprint:
 ```r
 remotes::install_github(
   "ETC5523-2026/etc5523-assignment-4-shakshi07-tech",
-  subdir = "fireprint"
+  subdir = "fireprint",
+  dependencies = NA,
+  upgrade = "never"
 )
 ```
 
 The `subdir = "fireprint"` argument is necessary because the R package is located inside the `fireprint` folder of the assignment repository.
 
-The package has been successfully installed from GitHub and checked using `devtools::check()`, with no errors, warnings or notes in the completed check.
+Required dependencies, including shiny, leaflet, bslib, htmltools and htmlwidgets, are automatically installed if they are not already available.
+
+The package has been successfully checked using devtools::check(), with 0 errors, 0 warnings and 0 notes. Installation on another computer should be verified separately.
 
 ## Launching the interactive dashboard
 
